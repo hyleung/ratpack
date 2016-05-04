@@ -26,6 +26,8 @@ import io.netty.handler.codec.PrematureChannelClosureException;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ratpack.exec.Downstream;
 import ratpack.exec.Execution;
 import ratpack.func.Action;
@@ -48,7 +50,7 @@ import java.util.regex.Pattern;
 import static ratpack.util.Exceptions.uncheck;
 
 abstract class RequestActionSupport<T> implements RequestAction<T> {
-
+private final Logger logger = LoggerFactory.getLogger(RequestActionSupport.class);
   private static final Pattern ABSOLUTE_PATTERN = Pattern.compile("^https?://.*");
 
   private final Action<? super RequestSpec> requestConfigurer;
@@ -206,6 +208,7 @@ abstract class RequestActionSupport<T> implements RequestAction<T> {
       if (connectFuture.isSuccess()) {
         String fullPath = getFullPath(uri);
         FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.valueOf(requestSpecBacking.getMethod()), fullPath, requestSpecBacking.getBody());
+        logger.info("Request {}", request);
         if (headers.get(HttpHeaderConstants.HOST) == null) {
           HostAndPort hostAndPort = HostAndPort.fromParts(host, port);
           headers.set(HttpHeaderConstants.HOST, hostAndPort.toString());
