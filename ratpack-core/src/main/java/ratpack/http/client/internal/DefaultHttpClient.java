@@ -26,6 +26,7 @@ import ratpack.exec.Execution;
 import ratpack.exec.Promise;
 import ratpack.exec.internal.ExecControllerInternal;
 import ratpack.func.Action;
+import ratpack.handling.Context;
 import ratpack.http.client.*;
 import ratpack.server.ServerConfig;
 import ratpack.util.internal.ChannelImplDetector;
@@ -105,9 +106,9 @@ public class DefaultHttpClient implements HttpClientInternal {
 
   private DefaultHttpClient(ByteBufAllocator byteBufAllocator, int maxContentLength, int poolSize, Duration readTimeout) {
     this(byteBufAllocator, maxContentLength, poolSize, readTimeout,
-      () -> Execution.current().getAll(HttpClientRequestInterceptor.class),
-      () -> Execution.current().getAll(HttpClientResponseInterceptor.class),
-      () -> Execution.current().maybeGet(RequestSpecConfigurer.class));
+      () -> Execution.current().get(Context.class).getAll(HttpClientRequestInterceptor.class),
+      () -> Execution.current().get(Context.class).getAll(HttpClientResponseInterceptor.class),
+      () -> Execution.current().get(Context.class).maybeGet(RequestSpecConfigurer.class));
   }
 
 
@@ -123,6 +124,8 @@ public class DefaultHttpClient implements HttpClientInternal {
     this.responseInterceptor = responseInterceptor;
     this.requestConfigurer = requestConfigurer;
   }
+
+
 
   @Override
   public int getPoolSize() {

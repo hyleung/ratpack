@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package ratpack.http.client
+
+import org.junit.Ignore
 import spock.lang.Unroll
 
 /**
@@ -31,12 +33,15 @@ class HttpClientInterceptorSpec extends BaseHttpClientSpec {
     }
     def requestInterceptor = Mock(HttpClientRequestInterceptor)
     def responseInterceptor = Mock(HttpClientResponseInterceptor)
+    bindings { bindings ->
+      bindInstance(HttpClientRequestInterceptor, requestInterceptor)
+      bindInstance(HttpClientResponseInterceptor, responseInterceptor)
+    }
+
     when:
 
     handlers {
       get { ctx ->
-        ctx.execution.add(HttpClientRequestInterceptor, requestInterceptor)
-        ctx.execution.add(HttpClientResponseInterceptor, responseInterceptor)
         def httpClient = ctx.get(HttpClient)
         httpClient.get(otherAppUrl("foo")) {
         } then { ReceivedResponse response ->
@@ -64,14 +69,16 @@ class HttpClientInterceptorSpec extends BaseHttpClientSpec {
     def requestInterceptorB = Mock(HttpClientRequestInterceptor)
     def responseInterceptorA = Mock(HttpClientResponseInterceptor)
     def responseInterceptorB = Mock(HttpClientResponseInterceptor)
+    bindings { bind ->
+      add(HttpClientRequestInterceptor, requestInterceptorA)
+      add(HttpClientResponseInterceptor, responseInterceptorA)
+      add(HttpClientRequestInterceptor, requestInterceptorB)
+      add(HttpClientResponseInterceptor, responseInterceptorB)
+    }
     when:
 
     handlers {
       get { ctx ->
-        ctx.execution.add(HttpClientRequestInterceptor, requestInterceptorA)
-        ctx.execution.add(HttpClientResponseInterceptor, responseInterceptorA)
-        ctx.execution.add(HttpClientRequestInterceptor, requestInterceptorB)
-        ctx.execution.add(HttpClientResponseInterceptor, responseInterceptorB)
         def httpClient = ctx.get(HttpClient)
         httpClient.get(otherAppUrl("foo")) {
         } then { ReceivedResponse response ->
