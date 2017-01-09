@@ -71,7 +71,7 @@ abstract class RequestActionSupport<T> implements Upstream<T> {
   private boolean disposed;
 
   RequestActionSupport(URI uri, HttpClientInternal client, int redirectCount, Execution execution, Action<? super RequestSpec> requestConfigurer) {
-    this(uri, client, redirectCount, execution, requestConfigurer, new HttpClientRequestInterceptorChain(Collections.emptyList()));
+    this(uri, client, redirectCount, execution, requestConfigurer, new HttpClientRequestInterceptorChain(Collections.emptyList(), execution));
   }
 
   RequestActionSupport(URI uri, HttpClientInternal client, int redirectCount, Execution execution, Action<? super RequestSpec> requestConfigurer, HttpClientRequestInterceptorChain requestInterceptorChain) {

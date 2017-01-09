@@ -220,10 +220,12 @@ public class DefaultHttpClient implements HttpClientInternal {
     RequestSpecConfigurer configurer = this.requestConfigurer
       .get()
       .orElse(requestSpec -> Action.noop());
+    final Execution execution = Execution.current();
     return Promise.async(downstream -> new ContentAggregatingRequestAction(uri, this, 0, Execution.current(),
       requestConfigurer.prepend(configurer::configure),
-      new HttpClientRequestInterceptorChain(requestInterceptor.get()),
-      new HttpClientResponseInterceptorChain(responseInterceptor.get())
+      //possibly need to pass the Execution along
+      new HttpClientRequestInterceptorChain(requestInterceptor.get(), execution),
+      new HttpClientResponseInterceptorChain(responseInterceptor.get(), execution)
       ).connect(downstream));
   }
 

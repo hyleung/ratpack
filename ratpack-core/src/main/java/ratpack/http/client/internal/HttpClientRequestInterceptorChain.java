@@ -15,11 +15,13 @@
  */
 package ratpack.http.client.internal;
 
+import ratpack.exec.Execution;
 import ratpack.http.client.HttpClientRequestInterceptor;
 import ratpack.http.client.SentRequest;
 
 class HttpClientRequestInterceptorChain {
   private Iterable<? extends HttpClientRequestInterceptor> interceptors;
+  private final Execution execution;
 
   /**
    * Constructor.
@@ -27,13 +29,15 @@ class HttpClientRequestInterceptorChain {
    * @param interceptors request interceptors
    */
   HttpClientRequestInterceptorChain(final Iterable<? extends HttpClientRequestInterceptor>
-                                             interceptors) {
+                                             interceptors,
+                                    final Execution execution) {
     this.interceptors = interceptors;
+    this.execution = execution;
   }
 
   void intercept(final SentRequest request) {
     interceptors.forEach(c -> c.intercept(new ImmutableSentRequest(request.method(),
       request.uri(),
-      request.requestHeaders())));
+      request.requestHeaders()), execution));
   }
 }

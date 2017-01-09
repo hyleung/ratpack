@@ -15,7 +15,6 @@
  */
 package ratpack.http.client
 
-import org.junit.Ignore
 import spock.lang.Unroll
 
 /**

@@ -15,10 +15,12 @@
  */
 package ratpack.http.client;
 
+import ratpack.exec.Execution;
+
 /**
  * Functional interface for http client response interceptors.
  */
 @FunctionalInterface
 public interface HttpClientResponseInterceptor {
-  void intercept(ReceivedResponse receivedResponse);
+  void intercept(ReceivedResponse receivedResponse, Execution execution);
 }
